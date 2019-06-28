@@ -1,0 +1,18 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "br.arida.cadim.storage.StorageProperties",
+      "name": "storage",
+      "type": "br.arida.cadim.storage.StorageProperties"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "br.arida.cadim.storage.StorageProperties",
+      "name": "storage.location",
+      "description": "Folder location for storing files",
+      "type": "java.lang.String"
+    }
+  ]
+}

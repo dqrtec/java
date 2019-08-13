@@ -1,0 +1,450 @@
+package bd;
+
+import java.io.File;
+import java.io.IOException;
+import static java.lang.System.out;
+import static java.lang.System.err;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.postgresql.*;
+
+public class Main {
+    static int ciclos=1;
+    static int ultimoCicloCadastrado=0;
+
+    public void mainECG(){
+
+        Connection conection = conexaoBancoRelacional();
+        truncateBancoDados(conection);
+        
+        String path = new String("C:\\Users\\Arida\\Desktop\\Demo ECG\\ECG\\Dados ECG\\web\\");
+        String[] nomePastasEcgs = pegaNomePastas(path);
+
+        String[] listaArquivos = new String[nomePastasEcgs.length*11];
+        
+        insereDadosBanco(conection, path, nomePastasEcgs, listaArquivos);
+
+        fecharConexao(conection);
+    }
+
+    private static String[] criaDiretorio(String diretorio) {
+        String nomeArquivo[] = new String[19];
+		
+        nomeArquivo[0] = diretorio + ".hea.txt";
+        nomeArquivo[1] = "Sinal_" + diretorio + "_Canal1.txt";
+        nomeArquivo[2] = "Pini_" + diretorio + "_Canal1.txt";
+        nomeArquivo[3] = "Ppeak_" + diretorio + "_Canal1.txt";
+        nomeArquivo[4] = "Pend_" + diretorio + "_Canal1.txt";
+        nomeArquivo[5] = "QRS_ON_" + diretorio + ".txt";
+        nomeArquivo[6] = "OndaR_" + diretorio + "_Canal1.txt";
+        nomeArquivo[7] = "QRS_OFF_" + diretorio + ".txt";
+        nomeArquivo[8] = "Tini_" + diretorio + "_Canal1.txt";
+        nomeArquivo[9] = "Tpeak_" + diretorio + "_Canal1.txt";
+        nomeArquivo[10] = "Tend_" + diretorio + "_Canal1.txt";
+        nomeArquivo[11] = "Sinal_" + diretorio + "_Canal2.txt";
+        nomeArquivo[12] = "Pini_" + diretorio + "_Canal2.txt";
+        nomeArquivo[13] = "Ppeak_" + diretorio + "_Canal2.txt";
+        nomeArquivo[14] = "Pend_" + diretorio + "_Canal2.txt";
+        nomeArquivo[15] = "OndaR_" + diretorio + "_Canal2.txt";
+        nomeArquivo[16] = "Tini_" + diretorio + "_Canal2.txt";
+        nomeArquivo[17] = "Tpeak_" + diretorio + "_Canal2.txt";
+        nomeArquivo[18] = "Tend_" + diretorio + "_Canal2.txt";
+
+        return nomeArquivo;
+    }
+
+    private static Integer inserePaciente(String variavelEcg, String path, String[] listaArquivos, Connection conection){
+        int paciente_id = 0;
+        int remedio_id = 0;
+	try{	
+            
+            byte[] txt = Files.readAllBytes(Paths.get(path + variavelEcg + "/" + listaArquivos[0]));
+            String texto = new String(txt, "UTF-8");
+
+            String[] linhas = texto.split("\n");
+
+            for(String linha : linhas) {
+                if(linha.substring(0,1).equals("#")) {
+
+                    String[] dadosDaLinha = linha.split(" ");
+                    String info1 = dadosDaLinha[1];
+                    String info2 = dadosDaLinha[2];
+
+                    if(info1.matches("[0-9]+")) {
+
+                        String idade = dadosDaLinha[1];
+                        String sexo = dadosDaLinha[2];
+
+                        PreparedStatement stm = conection.prepareStatement("insert into paciente (paciente_idade, paciente_sexo) values (?,?) RETURNING paciente_id");
+                        stm.setInt(1, Integer.parseInt(idade));
+                        stm.setString(2, sexo);
+
+                        ResultSet rs = stm.executeQuery();
+
+                        while (rs.next()) {
+                            paciente_id = rs.getInt(1);
+                        }
+
+                        rs.close();
+                        stm.close();
+
+                    }else {
+                        for(String medicamento : dadosDaLinha) {
+                            if(!medicamento.equals("#")) {
+
+                                if(medicamento.indexOf(",") != -1) {
+                                    medicamento = medicamento.substring(0, medicamento.length() - 1);
+                                }
+
+                                PreparedStatement stm = conection.prepareStatement("insert into remedio (remedio_descricao) values (?) RETURNING remedio_id");
+                                stm.setString(1, medicamento);
+
+                                ResultSet rs = stm.executeQuery();
+
+                                while (rs.next()) {
+                                    remedio_id = rs.getInt(1);
+                                }
+                                rs.close();
+                                stm.close();
+
+                                PreparedStatement stm2 = conection.prepareStatement("insert into receituario (remedio_id, paciente_id) values (?,?)");
+                                stm2.setInt(1, remedio_id);
+                                stm2.setInt(2, paciente_id);
+                                stm2.execute();
+                                stm2.close();  
+                            }
+                        }
+                    }
+                }
+            }
+
+        }catch(Exception e){
+            err.print(" deu erro no truncate ");
+        }
+        
+        return paciente_id;
+    }
+
+    private static void insereOndaP(String variavelEcg, String path, String[] listaArquivos, String[] ecgCompleto, Integer ecg_id, Connection conection){
+        try{
+            String[] amplitudeIni;
+            String[] amplitudePico;
+            String[] amplitudeFim;
+
+            byte[] txt1 = Files.readAllBytes(Paths.get(path + variavelEcg + "/" + listaArquivos[2]));
+            String texto1 = new String(txt1, "UTF-8");
+            String[] linhas1 = texto1.split(",");
+
+            byte[] txt2 = Files.readAllBytes(Paths.get(path + variavelEcg + "/" + listaArquivos[3]));
+            String texto2 = new String(txt2, "UTF-8");
+            String[] linhas2 = texto2.split(",");
+
+            byte[] txt3 = Files.readAllBytes(Paths.get(path + variavelEcg + "/" + listaArquivos[4]));
+            String texto3 = new String(txt3, "UTF-8");
+            String[] linhas3 = texto3.split(",");
+
+            amplitudeIni = new String[linhas1.length];
+            amplitudePico = new String[linhas1.length];
+            amplitudeFim = new String[linhas1.length];
+
+            for (int j = 0; j < linhas1.length - 1; j++) {
+
+                out.println(" onda p = "+j);
+
+                amplitudeIni[j] = ecgCompleto[Integer.parseInt(linhas1[j])];
+                amplitudePico[j] = ecgCompleto[Integer.parseInt(linhas2[j])];
+                amplitudeFim[j] = ecgCompleto[Integer.parseInt(linhas3[j])];
+                PreparedStatement stm = conection.prepareStatement("insert into p_onda (p_ini, p_pico, p_fim, p_ini_amp, p_pico_amp, p_fim_amp, ecg_id, ciclo_id) values (?,?,?,?,?,?,?,?)");
+                stm.setInt(1, Integer.parseInt(linhas1[j]));
+                stm.setInt(2, Integer.parseInt(linhas2[j]));
+                stm.setInt(3, Integer.parseInt(linhas3[j]));
+                stm.setFloat(4, Float.parseFloat(amplitudeIni[j]));
+                stm.setFloat(5, Float.parseFloat(amplitudePico[j]));
+                stm.setFloat(6, Float.parseFloat(amplitudeFim[j]));
+                stm.setInt(7, ecg_id);
+                stm.setInt(8, ultimoCicloCadastrado - linhas1.length + j + 1);
+                stm.execute();
+                stm.close();		
+            }
+        }catch(Exception e){
+            err.print(" deu erro no truncate ");
+        }
+    }
+
+    private static void insereOndaQRS(String variavelEcg, String path, String[] listaArquivos, String[] ecgCompleto, Integer ecg_id, Connection conection){
+        try{
+            String[] amplitudeIni;
+            String[] amplitudePico;
+            String[] amplitudeFim;
+
+            byte[] txt1 = Files.readAllBytes(Paths.get(path + variavelEcg + "/" + listaArquivos[5]));
+            String texto1 = new String(txt1, "UTF-8");
+            String[] linhas1 = texto1.split(",");
+
+            byte[] txt2 = Files.readAllBytes(Paths.get(path + variavelEcg + "/" + listaArquivos[6]));
+            String texto2 = new String(txt2, "UTF-8");
+            String[] linhas2 = texto2.split(",");
+
+            byte[] txt3 = Files.readAllBytes(Paths.get(path + variavelEcg + "/" + listaArquivos[7]));
+            String texto3 = new String(txt3, "UTF-8");
+            String[] linhas3 = texto3.split(",");
+
+            amplitudeIni = new String[linhas1.length];
+            amplitudePico = new String[linhas1.length];
+            amplitudeFim = new String[linhas1.length];
+            for (int j = 1; j < linhas1.length - 1; j++) {
+
+                amplitudeIni[j] = ecgCompleto[Integer.parseInt(linhas1[j])];
+                amplitudePico[j] = ecgCompleto[Integer.parseInt(linhas2[j])];
+                amplitudeFim[j] = ecgCompleto[Integer.parseInt(linhas3[j])];
+                PreparedStatement stm = conection.prepareStatement("insert into qrs_onda (qrs_ini, qrs_pico, qrs_fim, qrs_ini_amp, qrs_pico_amp, qrs_fim_amp, ecg_id, ciclo_id) values (?,?,?,?,?,?,?,?)");
+                stm.setInt(1, Integer.parseInt(linhas1[j]));
+                stm.setInt(2, Integer.parseInt(linhas2[j]));
+                stm.setInt(3, Integer.parseInt(linhas3[j]));
+                stm.setFloat(4, Float.parseFloat(amplitudeIni[j]));
+                stm.setFloat(5, Float.parseFloat(amplitudePico[j]));
+                stm.setFloat(6, Float.parseFloat(amplitudeFim[j]));
+                stm.setInt(7, ecg_id);
+                stm.setInt(8, ultimoCicloCadastrado - linhas1.length + j);
+                stm.execute();
+                stm.close();	
+            }
+        }catch(Exception e){
+            err.print(" deu erro no truncate ");
+        }
+    }
+
+    private static void insereOndaT(String variavelEcg, String path, String[] listaArquivos, String[] ecgCompleto, Integer ecg_id, Connection conection){
+        try{
+            String[] amplitudeIni;
+            String[] amplitudePico;
+            String[] amplitudeFim;
+
+            byte[] txt1 = Files.readAllBytes(Paths.get(path + variavelEcg + "/" + listaArquivos[8]));
+            String texto1 = new String(txt1, "UTF-8");
+            String[] linhas1 = texto1.split(",");
+
+            byte[] txt2 = Files.readAllBytes(Paths.get(path + variavelEcg + "/" + listaArquivos[9]));
+            String texto2 = new String(txt2, "UTF-8");
+            String[] linhas2 = texto2.split(",");
+
+            byte[] txt3 = Files.readAllBytes(Paths.get(path + variavelEcg + "/" + listaArquivos[10]));
+            String texto3 = new String(txt3, "UTF-8");
+            String[] linhas3 = texto3.split(",");
+
+            amplitudeIni = new String[linhas1.length];
+            amplitudePico = new String[linhas1.length];
+            amplitudeFim = new String[linhas1.length];
+            for (int j = 1; j < linhas1.length; j++) {
+
+                amplitudeIni[j] = ecgCompleto[Integer.parseInt(linhas1[j])];
+                amplitudePico[j] = ecgCompleto[Integer.parseInt(linhas2[j])];
+                amplitudeFim[j] = ecgCompleto[Integer.parseInt(linhas3[j])];
+                PreparedStatement stm = conection.prepareStatement("insert into t_onda (t_ini, t_pico, t_fim, t_ini_amp, t_pico_amp, t_fim_amp, ecg_id, ciclo_id) values (?,?,?,?,?,?,?,?)");
+                stm.setInt(1, Integer.parseInt(linhas1[j]));
+                stm.setInt(2, Integer.parseInt(linhas2[j]));
+                stm.setInt(3, Integer.parseInt(linhas3[j]));
+                stm.setFloat(4, Float.parseFloat(amplitudeIni[j]));
+                stm.setFloat(5, Float.parseFloat(amplitudePico[j]));
+                stm.setFloat(6, Float.parseFloat(amplitudeFim[j]));
+                stm.setInt(7, ecg_id);
+                stm.setInt(8, ultimoCicloCadastrado - linhas1.length +j);
+                stm.execute();
+                stm.close();   
+            }
+        }catch(Exception e){
+            err.print(" deu erro no truncate ");
+        }
+    }
+
+    private static Integer insereOndaBlob(String variavelEcg, String path, String[] listaArquivos,Connection conection, Integer pacienteId, String canal){
+        Integer ecg_id = 0;
+        try{
+            byte[] txt = null;
+            if(canal == "canal1") {
+                txt = Files.readAllBytes(Paths.get(path + variavelEcg + "/" + listaArquivos[1]));
+            }else {
+                txt = Files.readAllBytes(Paths.get(path + variavelEcg + "/" + listaArquivos[11]));
+            }
+            PreparedStatement stm = conection.prepareStatement("insert into ecg (ecg_byte, paciente_id) values (?,?) RETURNING ecg_id");
+            stm.setBytes(1, txt);
+            stm.setInt(2, pacienteId);
+            ResultSet rs = stm.executeQuery();
+            //stm.execute();
+            while (rs.next()) {
+                ecg_id = rs.getInt(1);
+            }
+            rs.close();
+            stm.close();
+            //stm.execute();
+            System.err.println(ecg_id);
+        }catch(Exception e){
+            err.print(" deu erro no truncate ");
+        }
+	return ecg_id;
+    }
+
+    private static String[] lerSinalCompleto(String variavelEcg, String path, String[] listaArquivos, String canal){
+	
+        String[] linhas = null;
+	try{	
+            if(canal == "canal1") {
+
+                byte[] txt = Files.readAllBytes(Paths.get(path + variavelEcg + "/" + listaArquivos[1]));
+
+                String texto = new String(txt, "UTF-8");
+
+                linhas = texto.split(",");
+            }else {
+
+                byte[] txt = Files.readAllBytes(Paths.get(path + variavelEcg + "/" + listaArquivos[11]));
+
+                String texto = new String(txt, "UTF-8");
+
+                linhas = texto.split(",");
+            }
+        }catch(Exception e){
+            err.print(" deu erro no truncate ");
+        }
+		
+	return linhas;
+    }
+
+    private static void insereCiclo(Integer idEcg, Integer canal_id, String variavelEcg , String path, String[] listaArquivos, Connection conection){//(Integer idEcg, Integer canal_id, String variavelEcg, String[] ecgCompletoCanal1, String[] ecgCompletoCanal2 , String path, String[] listaArquivos, Connection conection) throws IOException, SQLException{
+        try{
+            byte[] txt1 = Files.readAllBytes(Paths.get(path + variavelEcg + "/" + listaArquivos[2]));
+            String texto1 = new String(txt1, "UTF-8");
+            String[] linhas1 = texto1.split(",");
+
+            Integer ciclo_id = 0;
+
+            for (int j = 1; j < linhas1.length - 1; j++) {
+                PreparedStatement stm = conection.prepareStatement("insert into ciclo_completo (ecg_id, canal_id) values (?,?) RETURNING ciclo_id");
+                stm.setInt(1, idEcg);
+                stm.setInt(2, canal_id);
+
+                ResultSet rs = stm.executeQuery();
+                //stm.execute();
+                while (rs.next()) {
+                    ultimoCicloCadastrado = rs.getInt(1);
+                }
+                rs.close();
+                stm.close();
+
+            }
+        }catch(Exception e){
+            err.print(" deu erro no truncate ");
+        }
+    }
+
+    private static int insereCanal(Integer idEcg, Connection conection){
+        Integer canal_id = 0;
+        try{
+            PreparedStatement stm = conection.prepareStatement("insert into canal(descricao) values (?) RETURNING canal_id");
+            stm.setString(1, ("canal1 ecg "+idEcg));
+
+            ResultSet rs = stm.executeQuery();
+
+            while (rs.next()) {
+                canal_id = rs.getInt(1);
+            }
+            rs.close();
+            stm.close();
+        }catch(Exception e){
+            err.print(" deu erro no truncate ");
+        }
+        return canal_id;
+    }
+
+    private static int numeroCiclos(String variavelEcg, String path, String[] listaArquivos, String[] ecgCompleto, Integer ecg_id, Connection conection) throws IOException{
+	
+	byte[] txt1 = Files.readAllBytes(Paths.get(path + variavelEcg + "/" + listaArquivos[8]));
+	String texto1 = new String(txt1, "UTF-8");
+	String[] linhas1 = texto1.split(",");
+        return linhas1.length;
+    }
+    
+    private void truncateBancoDados(Connection conection){
+        
+        String todosTruncate = "truncate table canal cascade;truncate table canal_ecg cascade;truncate table ciclo_completo cascade;truncate table diagnostico cascade;truncate table diagnostico_ecg cascade;truncate table ecg cascade;truncate table p_onda cascade;truncate table paciente cascade;truncate table qrs_onda cascade;truncate table receituario cascade;truncate table remedio cascade;truncate table t_onda cascade";
+        String[] cadaTruncate = todosTruncate.split(";");
+        
+        for (String truncateAtual : cadaTruncate) {
+            truncate(truncateAtual, conection);
+        }
+    }
+    
+    private void truncate(String sql,Connection conection){
+        try{
+            Statement stm = conection.createStatement();
+            stm.execute(sql);
+        }catch(Exception e){
+            err.print(" deu erro no truncate ");
+        }
+    }
+    
+    private Connection conexaoBancoRelacional(){
+        Connection conection = null;
+        
+        try{
+            Class.forName("org.postgresql.Driver");
+            conection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/relacional_ecg","postgres","admin");
+        }catch(SQLException e) {
+            System.out.println("erro no banco "+e);
+	} catch (ClassNotFoundException ex) {
+            System.out.println("erro no banco "+ex);
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return conection;
+    }
+    
+    private void fecharConexao(Connection conection){
+        try {
+            if(!conection.isClosed()) conection.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private String[] pegaNomePastas(String path){
+	File folder = new File(path);
+	File[] listOfFiles = folder.listFiles();
+	String[] ecgs = new String[listOfFiles.length];
+        
+        for (int i = 0; i < listOfFiles.length; i++) {
+            if (listOfFiles[i].isDirectory()) {
+                ecgs[i] = listOfFiles[i].getName();
+            }
+	}
+        return ecgs;
+    }
+    
+    private void insereDadosBanco(Connection conection, String path, String[] nomePastasEcgs, String[] listaArquivos){
+        Integer idPaciente;
+	Integer idEcg;
+        
+        for (int i = 0; i < nomePastasEcgs.length; i++) {
+            listaArquivos = criaDiretorio(nomePastasEcgs[i]);
+            idPaciente = inserePaciente(nomePastasEcgs[i], path, listaArquivos, conection);
+            String[] ecgCompletoCanal1 = lerSinalCompleto(nomePastasEcgs[i], path, listaArquivos, "canal1");
+            //String[] ecgCompleto2Canal2 = lerSinalCompleto(ecgs[i], path, listaArquivos, "canal2");
+            idEcg = insereOndaBlob(nomePastasEcgs[i], path, listaArquivos, conection, idPaciente, "canal1");
+            //idEcg = insereOndaBlob(ecgs[i], path, listaArquivos, conection, idPaciente, "canal2");
+            Integer canal_id = new Integer( insereCanal(idEcg, conection) );
+            insereCiclo(idEcg, canal_id,  nomePastasEcgs[i] ,  path, listaArquivos, conection);
+            insereOndaP(nomePastasEcgs[i], path, listaArquivos, ecgCompletoCanal1,idEcg, conection);
+            insereOndaQRS(nomePastasEcgs[i], path, listaArquivos, ecgCompletoCanal1,idEcg, conection);
+            insereOndaT(nomePastasEcgs[i], path, listaArquivos, ecgCompletoCanal1,idEcg, conection);
+            //int numeroCiclosAtual = numeroCiclos(ecgs[i], path, listaArquivos, ecgCompletoCanal1,idEcg, conection);
+            //ciclos = ciclos + numeroCiclosAtual ;
+	}
+    }
+}

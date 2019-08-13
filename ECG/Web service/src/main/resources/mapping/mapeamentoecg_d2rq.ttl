@@ -1,0 +1,718 @@
+@prefix d2rq: <http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#>.
+@prefix jdbc: <http://d2rq.org/terms/jdbc/>.
+@prefix map: <#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix vocab: <vocab/>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+
+map:database a d2rq:Database;
+    d2rq:jdbcURL "jdbc:postgresql://localhost:5432/relacional_ecg";
+    d2rq:jdbcDriver "org.postgresql.Driver";
+    d2rq:username "postgres";
+    d2rq:password "admin";
+    .
+
+# Table canal
+map:canal a d2rq:ClassMap;
+    d2rq:dataStorage map:database;
+    d2rq:class vocab:canal;
+    d2rq:uriPattern "canal/@@canal.canal_id@@";
+    d2rq:classDefinitionLabel "canal";
+    .
+map:canal__label a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:canal;
+    d2rq:property rdfs:label;
+    d2rq:pattern "canal #@@canal.canal_id@@";
+    .
+map:canal_canal_id a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:canal;
+    d2rq:property vocab:canal_canal_id;
+    d2rq:column "canal.canal_id";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "canal canal_id";
+    .
+map:canal_descricao a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:canal;
+    d2rq:property vocab:canal_descricao;
+    d2rq:column "canal.descricao";
+    d2rq:propertyDefinitionLabel "canal descricao";
+    .
+
+# Table batimento_cardiaco
+# NOTE: Sorry, I don't know which columns to put into the d2rq:uriPattern
+# because the table doesn't have a primary key. Please specify it manually.
+map:batimento_cardiaco a d2rq:ClassMap;
+    d2rq:dataStorage map:database;
+    d2rq:class vocab:batimento_cardiaco;
+    d2rq:uriPattern "batimento_cardiaco";
+    d2rq:classDefinitionLabel "batimento_cardiaco";
+    .
+map:batimento_cardiaco_r_id_atual a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:batimento_cardiaco;
+    d2rq:property vocab:batimento_cardiaco_r_id_atual;
+    d2rq:column "batimento_cardiaco.r_id_atual";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "batimento_cardiaco r_id_atual";
+    .
+map:batimento_cardiaco_r_atual a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:batimento_cardiaco;
+    d2rq:property vocab:batimento_cardiaco_r_atual;
+    d2rq:column "batimento_cardiaco.r_atual";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "batimento_cardiaco r_atual";
+    .
+map:batimento_cardiaco_r_id_seguinte a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:batimento_cardiaco;
+    d2rq:property vocab:batimento_cardiaco_r_id_seguinte;
+    d2rq:column "batimento_cardiaco.r_id_seguinte";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "batimento_cardiaco r_id_seguinte";
+    .
+map:batimento_cardiaco_r_seguinte a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:batimento_cardiaco;
+    d2rq:property vocab:batimento_cardiaco_r_seguinte;
+    d2rq:column "batimento_cardiaco.r_seguinte";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "batimento_cardiaco r_seguinte";
+    .
+map:batimento_cardiaco_taxa_batimento a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:batimento_cardiaco;
+    d2rq:property vocab:batimento_cardiaco_taxa_batimento;
+    d2rq:column "batimento_cardiaco.taxa_batimento";
+    d2rq:datatype xsd:decimal;
+    d2rq:propertyDefinitionLabel "batimento_cardiaco taxa_batimento";
+    .
+map:batimento_cardiaco_ciclo_id a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:batimento_cardiaco;
+    d2rq:property vocab:batimento_cardiaco_ciclo_id;
+    d2rq:column "batimento_cardiaco.ciclo_id";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "batimento_cardiaco ciclo_id";
+    .
+
+# Table fastbeat
+# NOTE: Sorry, I don't know which columns to put into the d2rq:uriPattern
+# because the table doesn't have a primary key. Please specify it manually.
+map:fastbeat a d2rq:ClassMap;
+    d2rq:dataStorage map:database;
+    d2rq:class vocab:fastbeat;
+    d2rq:uriPattern "fastbeat";
+    d2rq:classDefinitionLabel "fastbeat";
+    .
+map:fastbeat_r_id_atual a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:fastbeat;
+    d2rq:property vocab:fastbeat_r_id_atual;
+    d2rq:column "fastbeat.r_id_atual";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "fastbeat r_id_atual";
+    .
+map:fastbeat_r_atual a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:fastbeat;
+    d2rq:property vocab:fastbeat_r_atual;
+    d2rq:column "fastbeat.r_atual";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "fastbeat r_atual";
+    .
+map:fastbeat_r_id_seguinte a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:fastbeat;
+    d2rq:property vocab:fastbeat_r_id_seguinte;
+    d2rq:column "fastbeat.r_id_seguinte";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "fastbeat r_id_seguinte";
+    .
+map:fastbeat_r_seguinte a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:fastbeat;
+    d2rq:property vocab:fastbeat_r_seguinte;
+    d2rq:column "fastbeat.r_seguinte";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "fastbeat r_seguinte";
+    .
+map:fastbeat_taxa_batimento a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:fastbeat;
+    d2rq:property vocab:fastbeat_taxa_batimento;
+    d2rq:column "fastbeat.taxa_batimento";
+    d2rq:datatype xsd:decimal;
+    d2rq:propertyDefinitionLabel "fastbeat taxa_batimento";
+    .
+map:fastbeat_ciclo_id a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:fastbeat;
+    d2rq:property vocab:fastbeat_ciclo_id;
+    d2rq:column "fastbeat.ciclo_id";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "fastbeat ciclo_id";
+    .
+
+# Table t_onda
+map:t_onda a d2rq:ClassMap;
+    d2rq:dataStorage map:database;
+    d2rq:class vocab:t_onda;
+    d2rq:uriPattern "t_onda/@@t_onda.t_id@@";
+    d2rq:classDefinitionLabel "t_onda";
+    .
+map:t_onda__label a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:t_onda;
+    d2rq:property rdfs:label;
+    d2rq:pattern "t_onda #@@t_onda.t_id@@";
+    .
+map:t_onda_t_id a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:t_onda;
+    d2rq:property vocab:t_onda_t_id;
+    d2rq:column "t_onda.t_id";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "t_onda t_id";
+    .
+map:t_onda_t_ini a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:t_onda;
+    d2rq:property vocab:t_onda_t_ini;
+    d2rq:column "t_onda.t_ini";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "t_onda t_ini";
+    .
+map:t_onda_t_pico a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:t_onda;
+    d2rq:property vocab:t_onda_t_pico;
+    d2rq:column "t_onda.t_pico";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "t_onda t_pico";
+    .
+map:t_onda_t_fim a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:t_onda;
+    d2rq:property vocab:t_onda_t_fim;
+    d2rq:column "t_onda.t_fim";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "t_onda t_fim";
+    .
+map:t_onda_t_ini_amp a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:t_onda;
+    d2rq:property vocab:t_onda_t_ini_amp;
+    d2rq:column "t_onda.t_ini_amp";
+    d2rq:datatype xsd:double;
+    d2rq:propertyDefinitionLabel "t_onda t_ini_amp";
+    .
+map:t_onda_t_pico_amp a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:t_onda;
+    d2rq:property vocab:t_onda_t_pico_amp;
+    d2rq:column "t_onda.t_pico_amp";
+    d2rq:datatype xsd:double;
+    d2rq:propertyDefinitionLabel "t_onda t_pico_amp";
+    .
+map:t_onda_t_fim_amp a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:t_onda;
+    d2rq:property vocab:t_onda_t_fim_amp;
+    d2rq:column "t_onda.t_fim_amp";
+    d2rq:datatype xsd:double;
+    d2rq:propertyDefinitionLabel "t_onda t_fim_amp";
+    .
+map:t_onda_ecg_id__ref a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:t_onda;
+    d2rq:property vocab:t_onda_ecg_id;
+    d2rq:refersToClassMap map:ecg;
+    d2rq:join "t_onda.ecg_id => ecg.ecg_id";
+    .
+map:t_onda_ciclo_id__ref a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:t_onda;
+    d2rq:property vocab:t_onda_ciclo_id;
+    d2rq:refersToClassMap map:ciclo_completo;
+    d2rq:join "t_onda.ciclo_id => ciclo_completo.ciclo_id";
+    .
+
+# Table ecg
+map:ecg a d2rq:ClassMap;
+    d2rq:dataStorage map:database;
+    d2rq:class vocab:ecg;
+    d2rq:uriPattern "ecg/@@ecg.ecg_id@@";
+    d2rq:classDefinitionLabel "ecg";
+    .
+# Table canal_ecg (n:m)
+map:canal_ecg__link a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:ecg;
+    d2rq:property vocab:canal_ecg;
+    d2rq:refersToClassMap map:canal;
+    d2rq:join "canal_ecg.ecg_id => ecg.ecg_id";
+    d2rq:join "canal_ecg.canal_id => canal.canal_id";
+    .
+# Table diagnostico_ecg (n:m)
+map:diagnostico_ecg__link a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:ecg;
+    d2rq:property vocab:diagnostico_ecg;
+    d2rq:refersToClassMap map:diagnostico;
+    d2rq:join "diagnostico_ecg.ecg_id => ecg.ecg_id";
+    d2rq:join "diagnostico_ecg.diagnostico_id => diagnostico.diagnostico_id";
+    .
+map:ecg__label a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:ecg;
+    d2rq:property rdfs:label;
+    d2rq:pattern "ecg #@@ecg.ecg_id@@";
+    .
+map:ecg_ecg_id a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:ecg;
+    d2rq:property vocab:ecg_ecg_id;
+    d2rq:column "ecg.ecg_id";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "ecg ecg_id";
+    .
+map:ecg_ecg_byte a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:ecg;
+    d2rq:property vocab:ecg_ecg_byte;
+    d2rq:column "ecg.ecg_byte";
+    d2rq:datatype xsd:hexBinary;
+    d2rq:propertyDefinitionLabel "ecg ecg_byte";
+    .
+map:ecg_marcapasso a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:ecg;
+    d2rq:property vocab:ecg_marcapasso;
+    d2rq:column "ecg.marcapasso";
+    d2rq:propertyDefinitionLabel "ecg marcapasso";
+    .
+map:ecg_paciente_id__ref a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:ecg;
+    d2rq:property vocab:ecg_paciente_id;
+    d2rq:refersToClassMap map:paciente;
+    d2rq:join "ecg.paciente_id => paciente.paciente_id";
+    .
+
+# Table p_onda
+map:p_onda a d2rq:ClassMap;
+    d2rq:dataStorage map:database;
+    d2rq:class vocab:p_onda;
+    d2rq:uriPattern "p_onda/@@p_onda.p_id@@";
+    d2rq:classDefinitionLabel "p_onda";
+    .
+map:p_onda__label a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:p_onda;
+    d2rq:property rdfs:label;
+    d2rq:pattern "p_onda #@@p_onda.p_id@@";
+    .
+map:p_onda_p_id a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:p_onda;
+    d2rq:property vocab:p_onda_p_id;
+    d2rq:column "p_onda.p_id";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "p_onda p_id";
+    .
+map:p_onda_p_ini a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:p_onda;
+    d2rq:property vocab:p_onda_p_ini;
+    d2rq:column "p_onda.p_ini";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "p_onda p_ini";
+    .
+map:p_onda_p_pico a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:p_onda;
+    d2rq:property vocab:p_onda_p_pico;
+    d2rq:column "p_onda.p_pico";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "p_onda p_pico";
+    .
+map:p_onda_p_fim a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:p_onda;
+    d2rq:property vocab:p_onda_p_fim;
+    d2rq:column "p_onda.p_fim";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "p_onda p_fim";
+    .
+map:p_onda_p_ini_amp a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:p_onda;
+    d2rq:property vocab:p_onda_p_ini_amp;
+    d2rq:column "p_onda.p_ini_amp";
+    d2rq:datatype xsd:double;
+    d2rq:propertyDefinitionLabel "p_onda p_ini_amp";
+    .
+map:p_onda_p_pico_amp a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:p_onda;
+    d2rq:property vocab:p_onda_p_pico_amp;
+    d2rq:column "p_onda.p_pico_amp";
+    d2rq:datatype xsd:double;
+    d2rq:propertyDefinitionLabel "p_onda p_pico_amp";
+    .
+map:p_onda_p_fim_amp a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:p_onda;
+    d2rq:property vocab:p_onda_p_fim_amp;
+    d2rq:column "p_onda.p_fim_amp";
+    d2rq:datatype xsd:double;
+    d2rq:propertyDefinitionLabel "p_onda p_fim_amp";
+    .
+map:p_onda_ecg_id__ref a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:p_onda;
+    d2rq:property vocab:p_onda_ecg_id;
+    d2rq:refersToClassMap map:ecg;
+    d2rq:join "p_onda.ecg_id => ecg.ecg_id";
+    .
+map:p_onda_ciclo_id__ref a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:p_onda;
+    d2rq:property vocab:p_onda_ciclo_id;
+    d2rq:refersToClassMap map:ciclo_completo;
+    d2rq:join "p_onda.ciclo_id => ciclo_completo.ciclo_id";
+    .
+
+# Table ciclo
+# NOTE: Sorry, I don't know which columns to put into the d2rq:uriPattern
+# because the table doesn't have a primary key. Please specify it manually.
+map:ciclo a d2rq:ClassMap;
+    d2rq:dataStorage map:database;
+    d2rq:class vocab:ciclo;
+    d2rq:uriPattern "ciclo";
+    d2rq:classDefinitionLabel "ciclo";
+    .
+map:ciclo_ciclo_id a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:ciclo;
+    d2rq:property vocab:ciclo_ciclo_id;
+    d2rq:column "ciclo.ciclo_id";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "ciclo ciclo_id";
+    .
+map:ciclo_ecg_id a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:ciclo;
+    d2rq:property vocab:ciclo_ecg_id;
+    d2rq:column "ciclo.ecg_id";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "ciclo ecg_id";
+    .
+
+# Table ciclo_completo
+map:ciclo_completo a d2rq:ClassMap;
+    d2rq:dataStorage map:database;
+    d2rq:class vocab:ciclo_completo;
+    d2rq:uriPattern "ciclo_completo/@@ciclo_completo.ciclo_id@@";
+    d2rq:classDefinitionLabel "ciclo_completo";
+    .
+map:ciclo_completo__label a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:ciclo_completo;
+    d2rq:property rdfs:label;
+    d2rq:pattern "ciclo_completo #@@ciclo_completo.ciclo_id@@";
+    .
+map:ciclo_completo_ciclo_id a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:ciclo_completo;
+    d2rq:property vocab:ciclo_completo_ciclo_id;
+    d2rq:column "ciclo_completo.ciclo_id";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "ciclo_completo ciclo_id";
+    .
+map:ciclo_completo_tipo a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:ciclo_completo;
+    d2rq:property vocab:ciclo_completo_tipo;
+    d2rq:column "ciclo_completo.tipo";
+    d2rq:propertyDefinitionLabel "ciclo_completo tipo";
+    .
+map:ciclo_completo_ecg_id__ref a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:ciclo_completo;
+    d2rq:property vocab:ciclo_completo_ecg_id;
+    d2rq:refersToClassMap map:ecg;
+    d2rq:join "ciclo_completo.ecg_id => ecg.ecg_id";
+    .
+map:ciclo_completo_canal_id__ref a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:ciclo_completo;
+    d2rq:property vocab:ciclo_completo_canal_id;
+    d2rq:refersToClassMap map:canal;
+    d2rq:join "ciclo_completo.canal_id => canal.canal_id";
+    .
+
+# Table qrs_onda
+map:qrs_onda a d2rq:ClassMap;
+    d2rq:dataStorage map:database;
+    d2rq:class vocab:qrs_onda;
+    d2rq:uriPattern "qrs_onda/@@qrs_onda.qrs_id@@";
+    d2rq:classDefinitionLabel "qrs_onda";
+    .
+map:qrs_onda__label a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:qrs_onda;
+    d2rq:property rdfs:label;
+    d2rq:pattern "qrs_onda #@@qrs_onda.qrs_id@@";
+    .
+map:qrs_onda_qrs_id a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:qrs_onda;
+    d2rq:property vocab:qrs_onda_qrs_id;
+    d2rq:column "qrs_onda.qrs_id";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "qrs_onda qrs_id";
+    .
+map:qrs_onda_qrs_ini a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:qrs_onda;
+    d2rq:property vocab:qrs_onda_qrs_ini;
+    d2rq:column "qrs_onda.qrs_ini";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "qrs_onda qrs_ini";
+    .
+map:qrs_onda_qrs_pico a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:qrs_onda;
+    d2rq:property vocab:qrs_onda_qrs_pico;
+    d2rq:column "qrs_onda.qrs_pico";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "qrs_onda qrs_pico";
+    .
+map:qrs_onda_qrs_fim a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:qrs_onda;
+    d2rq:property vocab:qrs_onda_qrs_fim;
+    d2rq:column "qrs_onda.qrs_fim";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "qrs_onda qrs_fim";
+    .
+map:qrs_onda_qrs_ini_amp a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:qrs_onda;
+    d2rq:property vocab:qrs_onda_qrs_ini_amp;
+    d2rq:column "qrs_onda.qrs_ini_amp";
+    d2rq:datatype xsd:double;
+    d2rq:propertyDefinitionLabel "qrs_onda qrs_ini_amp";
+    .
+map:qrs_onda_qrs_pico_amp a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:qrs_onda;
+    d2rq:property vocab:qrs_onda_qrs_pico_amp;
+    d2rq:column "qrs_onda.qrs_pico_amp";
+    d2rq:datatype xsd:double;
+    d2rq:propertyDefinitionLabel "qrs_onda qrs_pico_amp";
+    .
+map:qrs_onda_qrs_fim_amp a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:qrs_onda;
+    d2rq:property vocab:qrs_onda_qrs_fim_amp;
+    d2rq:column "qrs_onda.qrs_fim_amp";
+    d2rq:datatype xsd:double;
+    d2rq:propertyDefinitionLabel "qrs_onda qrs_fim_amp";
+    .
+map:qrs_onda_ecg_id__ref a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:qrs_onda;
+    d2rq:property vocab:qrs_onda_ecg_id;
+    d2rq:refersToClassMap map:ecg;
+    d2rq:join "qrs_onda.ecg_id => ecg.ecg_id";
+    .
+map:qrs_onda_ciclo_id__ref a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:qrs_onda;
+    d2rq:property vocab:qrs_onda_ciclo_id;
+    d2rq:refersToClassMap map:ciclo_completo;
+    d2rq:join "qrs_onda.ciclo_id => ciclo_completo.ciclo_id";
+    .
+
+# Table diagnostico
+map:diagnostico a d2rq:ClassMap;
+    d2rq:dataStorage map:database;
+    d2rq:class vocab:diagnostico;
+    d2rq:uriPattern "diagnostico/@@diagnostico.diagnostico_id@@";
+    d2rq:classDefinitionLabel "diagnostico";
+    .
+map:diagnostico__label a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:diagnostico;
+    d2rq:property rdfs:label;
+    d2rq:pattern "diagnostico #@@diagnostico.diagnostico_id@@";
+    .
+map:diagnostico_diagnostico_id a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:diagnostico;
+    d2rq:property vocab:diagnostico_diagnostico_id;
+    d2rq:column "diagnostico.diagnostico_id";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "diagnostico diagnostico_id";
+    .
+map:diagnostico_descricao a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:diagnostico;
+    d2rq:property vocab:diagnostico_descricao;
+    d2rq:column "diagnostico.descricao";
+    d2rq:propertyDefinitionLabel "diagnostico descricao";
+    .
+
+# Table paciente
+map:paciente a d2rq:ClassMap;
+    d2rq:dataStorage map:database;
+    d2rq:class vocab:paciente;
+    d2rq:uriPattern "paciente/@@paciente.paciente_id@@";
+    d2rq:classDefinitionLabel "paciente";
+    .
+map:paciente__label a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:paciente;
+    d2rq:property rdfs:label;
+    d2rq:pattern "paciente #@@paciente.paciente_id@@";
+    .
+map:paciente_paciente_id a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:paciente;
+    d2rq:property vocab:paciente_paciente_id;
+    d2rq:column "paciente.paciente_id";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "paciente paciente_id";
+    .
+map:paciente_paciente_idade a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:paciente;
+    d2rq:property vocab:paciente_paciente_idade;
+    d2rq:column "paciente.paciente_idade";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "paciente paciente_idade";
+    .
+map:paciente_paciente_sexo a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:paciente;
+    d2rq:property vocab:paciente_paciente_sexo;
+    d2rq:column "paciente.paciente_sexo";
+    d2rq:propertyDefinitionLabel "paciente paciente_sexo";
+    .
+
+# Table slowbeat
+# NOTE: Sorry, I don't know which columns to put into the d2rq:uriPattern
+# because the table doesn't have a primary key. Please specify it manually.
+map:slowbeat a d2rq:ClassMap;
+    d2rq:dataStorage map:database;
+    d2rq:class vocab:slowbeat;
+    d2rq:uriPattern "slowbeat";
+    d2rq:classDefinitionLabel "slowbeat";
+    .
+map:slowbeat_r_id_atual a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:slowbeat;
+    d2rq:property vocab:slowbeat_r_id_atual;
+    d2rq:column "slowbeat.r_id_atual";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "slowbeat r_id_atual";
+    .
+map:slowbeat_r_atual a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:slowbeat;
+    d2rq:property vocab:slowbeat_r_atual;
+    d2rq:column "slowbeat.r_atual";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "slowbeat r_atual";
+    .
+map:slowbeat_r_id_seguinte a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:slowbeat;
+    d2rq:property vocab:slowbeat_r_id_seguinte;
+    d2rq:column "slowbeat.r_id_seguinte";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "slowbeat r_id_seguinte";
+    .
+map:slowbeat_r_seguinte a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:slowbeat;
+    d2rq:property vocab:slowbeat_r_seguinte;
+    d2rq:column "slowbeat.r_seguinte";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "slowbeat r_seguinte";
+    .
+map:slowbeat_taxa_batimento a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:slowbeat;
+    d2rq:property vocab:slowbeat_taxa_batimento;
+    d2rq:column "slowbeat.taxa_batimento";
+    d2rq:datatype xsd:decimal;
+    d2rq:propertyDefinitionLabel "slowbeat taxa_batimento";
+    .
+map:slowbeat_ciclo_id a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:slowbeat;
+    d2rq:property vocab:slowbeat_ciclo_id;
+    d2rq:column "slowbeat.ciclo_id";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "slowbeat ciclo_id";
+    .
+
+# Table remedio
+map:remedio a d2rq:ClassMap;
+    d2rq:dataStorage map:database;
+    d2rq:class vocab:remedio;
+    d2rq:uriPattern "remedio/@@remedio.remedio_id@@";
+    d2rq:classDefinitionLabel "remedio";
+    .
+# Table receituario (n:m)
+map:receituario__link a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:remedio;
+    d2rq:property vocab:receituario;
+    d2rq:refersToClassMap map:paciente;
+    d2rq:join "receituario.remedio_id => remedio.remedio_id";
+    d2rq:join "receituario.paciente_id => paciente.paciente_id";
+    .
+map:remedio__label a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:remedio;
+    d2rq:property rdfs:label;
+    d2rq:pattern "remedio #@@remedio.remedio_id@@";
+    .
+map:remedio_remedio_id a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:remedio;
+    d2rq:property vocab:remedio_remedio_id;
+    d2rq:column "remedio.remedio_id";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "remedio remedio_id";
+    .
+map:remedio_remedio_descricao a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:remedio;
+    d2rq:property vocab:remedio_remedio_descricao;
+    d2rq:column "remedio.remedio_descricao";
+    d2rq:propertyDefinitionLabel "remedio remedio_descricao";
+    .
+
+# Table normalbeat
+# NOTE: Sorry, I don't know which columns to put into the d2rq:uriPattern
+# because the table doesn't have a primary key. Please specify it manually.
+map:normalbeat a d2rq:ClassMap;
+    d2rq:dataStorage map:database;
+    d2rq:class vocab:normalbeat;
+    d2rq:uriPattern "normalbeat";
+    d2rq:classDefinitionLabel "normalbeat";
+    .
+map:normalbeat_r_id_atual a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:normalbeat;
+    d2rq:property vocab:normalbeat_r_id_atual;
+    d2rq:column "normalbeat.r_id_atual";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "normalbeat r_id_atual";
+    .
+map:normalbeat_r_atual a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:normalbeat;
+    d2rq:property vocab:normalbeat_r_atual;
+    d2rq:column "normalbeat.r_atual";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "normalbeat r_atual";
+    .
+map:normalbeat_r_id_seguinte a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:normalbeat;
+    d2rq:property vocab:normalbeat_r_id_seguinte;
+    d2rq:column "normalbeat.r_id_seguinte";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "normalbeat r_id_seguinte";
+    .
+map:normalbeat_r_seguinte a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:normalbeat;
+    d2rq:property vocab:normalbeat_r_seguinte;
+    d2rq:column "normalbeat.r_seguinte";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "normalbeat r_seguinte";
+    .
+map:normalbeat_taxa_batimento a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:normalbeat;
+    d2rq:property vocab:normalbeat_taxa_batimento;
+    d2rq:column "normalbeat.taxa_batimento";
+    d2rq:datatype xsd:decimal;
+    d2rq:propertyDefinitionLabel "normalbeat taxa_batimento";
+    .
+map:normalbeat_ciclo_id a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:normalbeat;
+    d2rq:property vocab:normalbeat_ciclo_id;
+    d2rq:column "normalbeat.ciclo_id";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "normalbeat ciclo_id";
+    .
+
+# Table pr_segmento
+# NOTE: Sorry, I don't know which columns to put into the d2rq:uriPattern
+# because the table doesn't have a primary key. Please specify it manually.
+map:pr_segmento a d2rq:ClassMap;
+    d2rq:dataStorage map:database;
+    d2rq:class vocab:pr_segmento;
+    d2rq:uriPattern "pr_segmento";
+    d2rq:classDefinitionLabel "pr_segmento";
+    .
+map:pr_segmento_pr_id a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:pr_segmento;
+    d2rq:property vocab:pr_segmento_pr_id;
+    d2rq:column "pr_segmento.pr_id";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "pr_segmento pr_id";
+    .
+map:pr_segmento_pr_ini a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:pr_segmento;
+    d2rq:property vocab:pr_segmento_pr_ini;
+    d2rq:column "pr_segmento.pr_ini";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "pr_segmento pr_ini";
+    .
+map:pr_segmento_pr_fim a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:pr_segmento;
+    d2rq:property vocab:pr_segmento_pr_fim;
+    d2rq:column "pr_segmento.pr_fim";
+    d2rq:datatype xsd:integer;
+    d2rq:propertyDefinitionLabel "pr_segmento pr_fim";
+    .
+map:pr_segmento_pr_interval a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:pr_segmento;
+    d2rq:property vocab:pr_segmento_pr_interval;
+    d2rq:column "pr_segmento.pr_interval";
+    d2rq:datatype xsd:decimal;
+    d2rq:propertyDefinitionLabel "pr_segmento pr_interval";
+    .

@@ -25,7 +25,7 @@
 
 
 		<d2rq.version>1.0</d2rq.version>
-		<postgres.version>42.2.2</postgres.version>
+		<postgres.version>42.2.25</postgres.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
